@@ -13,6 +13,7 @@ class Service extends Model
         'price',
         'duration',
         'discount',
+        'discount_type',
         'advance_payment',
         'advance_payment_value',
         'advance_payment_type',

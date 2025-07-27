@@ -11,6 +11,9 @@ class Booking extends Model
         'client_id',
         'service_id',
         'price',
+        'booking_date',
+        'booking_time',
+        'status',
     ];
 
     /**

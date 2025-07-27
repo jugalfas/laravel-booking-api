@@ -18,17 +18,16 @@ class AuthController extends Controller
 
         $credentials = $request->only('email', 'password');
 
-        if (!Auth::guard('sanctum')->attempt($credentials)) {
+        if (!Auth::attempt($credentials)) {
             return response()->json([
                 'message' => 'Invalid credentials',
             ], 401);
         }
 
-        $user = Auth::guard('sanctum')->user();
+        $user = Auth::user();
 
         // Check if user is verified
         if (is_null($user->email_verified_at)) {
-            Auth::guard('sanctum')->logout();
             return response()->json([
                 'message' => 'Your email address is not verified.',
             ], 403);
@@ -37,7 +36,7 @@ class AuthController extends Controller
         // Create Sanctum token
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        // Get role (assuming spatie/laravel-permission or similar, otherwise fallback to null)
+        // Get role (assuming spatie/laravel-permission or similar)
         if (method_exists($user, 'getRoleNames')) {
             $roles = $user->getRoleNames();
             $role = $roles->isNotEmpty() ? $roles->first() : null;
@@ -143,5 +142,24 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Email verified successfully.',
         ], 200);
+    }
+
+    public function logout(Request $request)
+    {
+        $user = Auth::guard('sanctum')->user();
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'You are not logged in.',
+            ], 401);
+        }
+
+        // Revoke all tokens for the user
+        $user->tokens()->delete();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Logged out successfully.',
+        ]);
     }
 }

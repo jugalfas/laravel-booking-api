@@ -19,6 +19,7 @@ return new class extends Migration
             $table->decimal('price', 10, 2);
             $table->integer('duration'); // duration in minutes
             $table->decimal('discount', 10, 2)->default(0);
+            $table->enum('discount_type', ['fixed', 'percentage'])->default('percentage');
             $table->boolean('advance_payment')->default(false);
             $table->decimal('advance_payment_value', 10, 2)->nullable();
             $table->enum('advance_payment_type', ['fixed', 'percentage'])->nullable();
